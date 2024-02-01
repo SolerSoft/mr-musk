@@ -4448,9 +4448,9 @@ MonoBehaviour:
   virtualGreenScreenApplyDepthCulling: 0
   virtualGreenScreenDepthTolerance: 0.2
   mrcActivationMode: 0
-  launchMultimodalHandsControllersOnStartup: 0
+  launchMultimodalHandsControllersOnStartup: 1
   isInsightPassthroughEnabled: 1
-  requestBodyTrackingPermissionOnStartup: 0
+  requestBodyTrackingPermissionOnStartup: 1
   requestFaceTrackingPermissionOnStartup: 0
   requestEyeTrackingPermissionOnStartup: 0
   requestScenePermissionOnStartup: 0
@@ -7795,7 +7795,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5cc5c234723e3a54d8dd09b131117743, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _meshType: -1
+  _meshType: 0
 --- !u!114 &859159263
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7827,7 +7827,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2609c54f376cffc4da1ab9401cc1a36f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _skeletonType: -1
+  _skeletonType: 0
   _updateRootPose: 0
   _updateRootScale: 1
   _enablePhysicsCapsules: 0
@@ -7844,7 +7844,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb7623a8f0b49cf4dbaa40aea4d4be64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HandType: -1
+  HandType: 0
   _pointerPoseRoot: {fileID: 0}
   m_showState: 3
 --- !u!114 &859159266
@@ -17221,7 +17221,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _handGrabState: {fileID: 1843792014}
-  _syntheticHand: {fileID: 0}
+  _syntheticHand: {fileID: 383734452}
 --- !u!1 &1943522901
 GameObject:
   m_ObjectHideFlags: 0
@@ -18960,7 +18960,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _handGrabState: {fileID: 334773572}
-  _syntheticHand: {fileID: 0}
+  _syntheticHand: {fileID: 1544340643}
 --- !u!1 &2109788427
 GameObject:
   m_ObjectHideFlags: 0
@@ -19148,7 +19148,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5cc5c234723e3a54d8dd09b131117743, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _meshType: -1
+  _meshType: 1
 --- !u!114 &2112581595
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19180,7 +19180,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2609c54f376cffc4da1ab9401cc1a36f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _skeletonType: -1
+  _skeletonType: 1
   _updateRootPose: 0
   _updateRootScale: 1
   _enablePhysicsCapsules: 0
@@ -19197,7 +19197,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb7623a8f0b49cf4dbaa40aea4d4be64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HandType: -1
+  HandType: 1
   _pointerPoseRoot: {fileID: 0}
   m_showState: 3
 --- !u!114 &2112581598
