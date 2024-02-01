@@ -25,15 +25,50 @@ namespace SolerSoft.MRMUSK.Colocation
         private bool _inSameRoom = true;
 
         [SerializeField]
+        [Tooltip("Whether to localize automatically on start.")]
+        private bool _localizeOnStart = true;
+
+        [SerializeField]
         [Tooltip("The stage where colocated content is presented.")]
         private GameObject _stage;
 
         #endregion Unity Inspector Variables
 
+        #region Unity Message Handlers
+
+        /// <inheritdoc />
+        private void Start()
+        {
+            // If no stage is provided, use current GameObject
+            if (_stage == null) { _stage = gameObject; }
+
+            // Get the anchor store
+            _anchorStore = GetComponent<IAnchorStore>();
+
+            // Ensure we got the anchor store
+            if (_anchorStore == null)
+            {
+                LogError($"{nameof(ColocationManager)} requires a component that implements {nameof(IAnchorStore)} and will be disabled.");
+                enabled = false;
+                return;
+            }
+
+            // Localize?
+            if (_localizeOnStart)
+            {
+                var t = LocalizeAsync();
+            }
+        }
+
+        #endregion Unity Message Handlers
+
         #region Private Methods
 
         private void Log(string message)
         { Debug.Log(message); }
+
+        private void LogError(string message)
+        { Debug.LogError(message); }
 
         private void LogWarning(string message)
         { Debug.LogWarning(message); }
@@ -59,13 +94,6 @@ namespace SolerSoft.MRMUSK.Colocation
                 // Bad things happened, let the caller know
                 tcs.SetException(e);
             }
-        }
-
-        /// <inheritdoc />
-        private void Start()
-        {
-            // If no stage is provided, use current GameObject
-            if (_stage == null) { _stage = gameObject; }
         }
 
         #endregion Private Methods
@@ -112,6 +140,9 @@ namespace SolerSoft.MRMUSK.Colocation
         /// </returns>
         public async Task LocalizeAsync()
         {
+            // Log
+            Log("Attempting to localize...");
+
             // If we are not in the same room as other users
             if (!_inSameRoom)
             {
@@ -150,6 +181,9 @@ namespace SolerSoft.MRMUSK.Colocation
         /// </remarks>
         public async Task LocalizeToFloorAsync()
         {
+            // Log
+            Log("NOT Attempting to localize to the floor...");
+
             // TODO:
         }
 
@@ -161,6 +195,9 @@ namespace SolerSoft.MRMUSK.Colocation
         /// </returns>
         public async Task SaveToCloudAndStoreAsync()
         {
+            // Log
+            Log("Saving anchor to cloud...");
+
             // If there is no spatial anchor, add it
             var anchor = _stage.GetOrAddComponent<OVRSpatialAnchor>();
 
@@ -175,6 +212,9 @@ namespace SolerSoft.MRMUSK.Colocation
 
             // If not successful, we can't save
             if (!success) { throw new InvalidOperationException("Could not save anchor to cloud."); }
+
+            // Log
+            Log("Saving anchor to store...");
 
             // Save to the store
             await _anchorStore.SaveAnchorIdAsync(anchor.Uuid);
@@ -262,6 +302,9 @@ namespace SolerSoft.MRMUSK.Colocation
         /// </returns>
         public async Task<bool> TryLocalizeToStoreAsync()
         {
+            // Log
+            Log("Trying to loading anchor ID from store...");
+
             // Attempt to load the anchor ID
             var anchorId = await _anchorStore.LoadAnchorIdAsync();
 
@@ -280,6 +323,11 @@ namespace SolerSoft.MRMUSK.Colocation
         /// Gets or sets whether multiple users are in the same room.
         /// </summary>
         public bool InSameRoom { get => _inSameRoom; set => _inSameRoom = value; }
+
+        /// <summary>
+        /// Gets or sets whether to localize automatically on start.
+        /// </summary>
+        public bool LocalizeOnStart { get => _localizeOnStart; set => _localizeOnStart = value; }
 
         /// <summary>
         /// Gets or sets the stage where colocated content is presented.
