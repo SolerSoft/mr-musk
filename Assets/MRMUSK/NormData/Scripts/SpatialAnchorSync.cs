@@ -5,18 +5,34 @@ using UnityEngine;
 
 public class SpatialAnchorSync : RealtimeComponent<SpatialAnchorModel>
 {
-    private string currentSpatialAnchorModel = "";
-    // Start is called before the first frame update
-    void Start()
+    #region Public Fields
+    public string currentSpatialAnchorModel = "";
+    #endregion Public Fields
+    #region Private Methods
+
+    private void SpatialAnchorIDChanged(SpatialAnchorModel model, string value)
     {
-        
+        UpdateSpatialAnchor();
+    }
+
+    // Start is called before the first frame update
+    private void Start()
+    {
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        
     }
+
+    private void UpdateSpatialAnchor()
+    {
+        currentSpatialAnchorModel = model.spatialAnchorID;
+    }
+
+    #endregion Private Methods
+
+    #region Protected Methods
 
     protected override void OnRealtimeModelReplaced(SpatialAnchorModel previousModel, SpatialAnchorModel currentModel)
     {
@@ -36,18 +52,13 @@ public class SpatialAnchorSync : RealtimeComponent<SpatialAnchorModel>
         }
     }
 
-    private void SpatialAnchorIDChanged(SpatialAnchorModel model, string value)
-    {
-        UpdateSpatialAnchor();
-    }
-
-    private void UpdateSpatialAnchor()
-    {
-        currentSpatialAnchorModel = model.spatialAnchorID;
-    }
+    #endregion Protected Methods
+    #region Public Methods
 
     public void SetSpatialAnchorID(string id)
     {
         model.spatialAnchorID = id;
     }
+
+    #endregion Public Methods
 }
