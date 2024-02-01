@@ -75,6 +75,14 @@ namespace SolerSoft.MRMUSK.Colocation
 
         private IEnumerator SaveAnchorToCloudRoutine(OVRSpatialAnchor osAnchor, TaskCompletionSource<bool> tcs)
         {
+            // If in the unity editor this will never complete
+            if (Application.isEditor)
+            {
+                Debug.LogWarning("Spatial anchors cannot be saved in the editor. Ignoring.");
+                tcs.SetResult(true);
+                yield break;
+            }
+
             // Wait for anchor to e created and localized
             while (!osAnchor.Created && !osAnchor.Localized)
             {
@@ -159,12 +167,19 @@ namespace SolerSoft.MRMUSK.Colocation
             // If not successful, we need to localize
             if (!localizedToStore)
             {
+                // Log
+                Log("Could not localize to store, localizing to floor instead.");
+
                 // Localize to the floor
                 await LocalizeToFloorAsync();
 
                 // If we're in the same room we need to save to store and cloud
                 if (_inSameRoom)
                 {
+                    // Log
+                    Log("Since multiple users are in the same room, saving to cloud and store...");
+
+                    // Save
                     await SaveToCloudAndStoreAsync();
                 }
             }
@@ -218,6 +233,9 @@ namespace SolerSoft.MRMUSK.Colocation
 
             // Save to the store
             await _anchorStore.SaveAnchorIdAsync(anchor.Uuid);
+
+            // Log
+            Log("Anchor saved to cloud and store...");
         }
 
         /// <summary>
@@ -309,7 +327,12 @@ namespace SolerSoft.MRMUSK.Colocation
             var anchorId = await _anchorStore.LoadAnchorIdAsync();
 
             // If the anchor is empty, nothing else to do
-            if (anchorId == Guid.Empty) { return false; }
+            if (anchorId == Guid.Empty)
+            {
+                // Log
+                Log("No anchor ID found in the store...");
+                return false;
+            }
 
             // Try to localize by anchor ID
             return await TryLocalizeToAnchorAsync(anchorId);

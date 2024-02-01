@@ -10,6 +10,10 @@ namespace SolerSoft.MRMUSK.Normcore
 {
     public class NormAnchorStore : RealtimeComponent<NormAnchorModel>, IAnchorStore
     {
+        #region Private Fields
+        private TaskCompletionSource<bool> _modelLoadedTask = new TaskCompletionSource<bool>();
+        #endregion Private Fields
+
         #region Unity Inspector Variables
 
         [SerializeField]
@@ -59,15 +63,31 @@ namespace SolerSoft.MRMUSK.Normcore
                 }
                 currentModel.spatialAnchorIDDidChange += SpatialAnchorIDChanged;
             }
+
+            // Complete the loading task
+            if (!_modelLoadedTask.Task.IsCompleted)
+            {
+                _modelLoadedTask.SetResult(true);
+            }
         }
 
         #endregion Protected Methods
         #region Public Methods
 
         /// <inheritdoc />
-        Task<Guid> IAnchorStore.LoadAnchorIdAsync()
+        async Task<Guid> IAnchorStore.LoadAnchorIdAsync()
         {
-            return Task.FromResult(Guid.Parse(model.spatialAnchorID));
+            // Make sure we have a model
+            await _modelLoadedTask.Task;
+
+            if (model.spatialAnchorID == null)
+            {
+                return Guid.Empty;
+            }
+            else
+            {
+                return Guid.Parse(model.spatialAnchorID);
+            }
         }
 
         /// <inheritdoc />
