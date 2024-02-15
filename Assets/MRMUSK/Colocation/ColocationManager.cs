@@ -164,12 +164,19 @@ namespace SolerSoft.MRMUSK.Colocation
             // Apply the offset to the parent's position and rotation _playerRig.rotation =
             // Quaternion.Euler(0, offsetRotation.eulerAngles.y - rigToTransformAngle, 0);
             // _playerRig.Rotate(Vector3.up, -transform.rotation.eulerAngles.y +
-            // rigToTransformAngle, Space.World);
-            _playerRig.Rotate(Vector3.up, -transform.rotation.eulerAngles.y, Space.World);
+            // rigToTransformAngle, Space.World); _playerRig.Rotate(Vector3.up,
+            // -transform.rotation.eulerAngles.y, Space.World);
+            Quaternion lookRotationVar = Quaternion.identity;
+
+            lookRotationVar = lookRotationVar * Quaternion.Inverse(transform.rotation);
+            lookRotationVar = lookRotationVar * _playerRig.rotation;
+
+            _playerRig.rotation = lookRotationVar;
 
             // _playerRig.position += offsetPosition; _playerRig.Translate(-rigToTransformDistance);
-            // _playerRig.position = -(transform.position - rigToTransformDistance);
+            // _playerRig.position = -(transform.position - rigToTransformDistance); _playerRig.Translate(-transform.position);
             _playerRig.Translate(-transform.position);
+            Debug.Log(transform.position);
         }
 
         #endregion Public Methods
