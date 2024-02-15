@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -27,6 +28,10 @@ namespace SolerSoft.MRMUSK.Colocation
         [SerializeField]
         [Tooltip("Whether to localize automatically on start.")]
         private bool _localizeOnStart = true;
+
+        [SerializeField]
+        [Tooltip("The UI to display log text.")]
+        private TextMeshProUGUI _logText;
 
         [SerializeField]
         [Tooltip("The stage where colocated content is presented.")]
@@ -65,13 +70,22 @@ namespace SolerSoft.MRMUSK.Colocation
         #region Private Methods
 
         private void Log(string message)
-        { Debug.Log(message); }
+        {
+            Debug.Log(message);
+            if (_logText != null) { _logText.text = message; }
+        }
 
         private void LogError(string message)
-        { Debug.LogError(message); }
+        {
+            Debug.Log(message);
+            if (_logText != null) { _logText.text = message; }
+        }
 
         private void LogWarning(string message)
-        { Debug.LogWarning(message); }
+        {
+            Debug.Log(message);
+            if (_logText != null) { _logText.text = message; }
+        }
 
         private IEnumerator SaveAnchorToCloudRoutine(OVRSpatialAnchor osAnchor, TaskCompletionSource<bool> tcs)
         {
