@@ -1,3 +1,4 @@
+using Newtonsoft.Json.Bson;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -14,342 +15,116 @@ namespace SolerSoft.MRMUSK.Colocation
     public class ColocationManager : MonoBehaviour
     {
         #region Private Fields
-
-        private IAnchorStore _anchorStore;
-
+        private bool _isColocating;
         #endregion Private Fields
 
         #region Unity Inspector Variables
 
         [SerializeField]
-        [Tooltip("Whether multiple users are in the same room.")]
-        private bool _inSameRoom = true;
+        [Tooltip("The transform that represents the player rig.")]
+        private Transform _playerRig;
 
         [SerializeField]
-        [Tooltip("Whether to localize automatically on start.")]
-        private bool _localizeOnStart = true;
-
-        [SerializeField]
-        [Tooltip("The UI to display log text.")]
-        private TextMeshProUGUI _logText;
-
-        [SerializeField]
-        [Tooltip("The stage where colocated content is presented.")]
-        private GameObject _stage;
+        [Tooltip("The transform that will be used as a reference for world center. This is often a controller but could be any tracked device.")]
+        private Transform _worldCenterReference;
 
         #endregion Unity Inspector Variables
 
-        #region Unity Message Handlers
-
-        /// <inheritdoc />
-        private void Start()
-        {
-            // If no stage is provided, use current GameObject
-            if (_stage == null) { _stage = gameObject; }
-
-            // Get the anchor store
-            _anchorStore = GetComponent<IAnchorStore>();
-
-            // Ensure we got the anchor store
-            if (_anchorStore == null)
-            {
-                LogError($"{nameof(ColocationManager)} requires a component that implements {nameof(IAnchorStore)} and will be disabled.");
-                enabled = false;
-                return;
-            }
-
-            // Localize?
-            if (_localizeOnStart)
-            {
-                var t = LocalizeAsync();
-            }
-        }
-
-        #endregion Unity Message Handlers
-
         #region Private Methods
 
-        private void Log(string message)
+        /// <summary>
+        /// Checks if we should Colocate based on controller input.
+        /// </summary>
+        private void TryColocate()
         {
-            Debug.Log(message);
-            if (_logText != null) { _logText.text = message; }
-        }
-
-        private void LogError(string message)
-        {
-            Debug.Log(message);
-            if (_logText != null) { _logText.text = message; }
-        }
-
-        private void LogWarning(string message)
-        {
-            Debug.Log(message);
-            if (_logText != null) { _logText.text = message; }
-        }
-
-        private IEnumerator SaveAnchorToCloudRoutine(OVRSpatialAnchor osAnchor, TaskCompletionSource<bool> tcs)
-        {
-            // If in the unity editor this will never complete
-            if (Application.isEditor)
+            // Check to see if all buttons are held
+            if (OVRInput.Get(OVRInput.Button.One) && OVRInput.Get(OVRInput.Button.Two) && OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger))
             {
-                Debug.LogWarning("Spatial anchors cannot be saved in the editor. Ignoring.");
-                tcs.SetResult(true);
-                yield break;
-            }
-
-            // Wait for anchor to e created and localized
-            while (!osAnchor.Created && !osAnchor.Localized)
-            {
-                yield return new WaitForEndOfFrame(); //keep checking
-            }
-
-            try
-            {
-                // Save and use callback to complete the task
-                osAnchor.Save((anchor, success) =>
+                // Avoid re-entrance
+                if (!_isColocating)
                 {
-                    tcs.SetResult(success);
-                });
+                    // We are now co-locating
+                    _isColocating = true;
+
+                    // Colocate to world reference
+                    Colocate();
+                }
             }
-            catch (Exception e)
+            else
             {
-                // Bad things happened, let the caller know
-                tcs.SetException(e);
+                // OK to check again on next frame
+                _isColocating = false;
             }
         }
 
         #endregion Private Methods
 
-        #region Public Methods
+        #region Unity Message Handlers
 
-        /// <summary>
-        /// Binds the specified anchor to the stage.
-        /// </summary>
-        /// <param name="unboundAnchor">
-        /// The anchor to bind.
-        /// </param>
-        /// <remarks>
-        /// Note that the anchor must already be located. If it's not, use
-        /// <see cref="TryLocalizeToAnchorAsync(OVRSpatialAnchor.UnboundAnchor)" /> instead.
-        /// </remarks>
-        public void BindToAnchor(OVRSpatialAnchor.UnboundAnchor unboundAnchor)
+        /// <inheritdoc />
+        protected virtual void Start()
         {
-            // Validate
-            if (!unboundAnchor.Localized) { throw new InvalidOperationException($"{nameof(unboundAnchor)} has not been localized."); }
-
-            // Log
-            Log("Attempting to bind to anchor...");
-
-            // Get the pose
-            var pose = unboundAnchor.Pose;
-
-            // Move the stage to the pose
-            _stage.transform.position = pose.position;
-            _stage.transform.rotation = pose.rotation;
-
-            // Get or add the spatial anchor
-            var _spatialAnchor = _stage.GetOrAddComponent<OVRSpatialAnchor>();
-
-            // Bind the spatial anchor
-            unboundAnchor.BindTo(_spatialAnchor);
-        }
-
-        /// <summary>
-        /// Localizes the stage.
-        /// </summary>
-        /// <returns>
-        /// A <see cref="Task" /> that represents the operation.
-        /// </returns>
-        public async Task LocalizeAsync()
-        {
-            // Log
-            Log("Attempting to localize...");
-
-            // If we are not in the same room as other users
-            if (!_inSameRoom)
+            // Verify all dependencies are met
+            if (_playerRig == null)
             {
-                // Just localize to floor
-                await LocalizeToFloorAsync();
-
-                // And we're done
+                Debug.LogError($"The player rig must be specified. {nameof(ColocationManager)} will be disabled.");
+                enabled = false;
                 return;
             }
 
-            // Try to localize to the stored anchor
-            bool localizedToStore = await TryLocalizeToStoreAsync();
-
-            // If not successful, we need to localize
-            if (!localizedToStore)
+            if (_worldCenterReference == null)
             {
-                // Log
-                Log("Could not localize to store, localizing to floor instead.");
-
-                // Localize to the floor
-                await LocalizeToFloorAsync();
-
-                // If we're in the same room we need to save to store and cloud
-                if (_inSameRoom)
-                {
-                    // Log
-                    Log("Since multiple users are in the same room, saving to cloud and store...");
-
-                    // Save
-                    await SaveToCloudAndStoreAsync();
-                }
+                Debug.LogError($"World center reference must be specified. {nameof(ColocationManager)} will be disabled.");
+                enabled = false;
+                return;
             }
         }
 
-        /// <summary>
-        /// Localizes the stage to the current room.
-        /// </summary>
-        /// <returns>
-        /// A <see cref="Task" /> that represents the operation.
-        /// </returns>
-        /// <remarks>
-        /// This localizes the stage to the center of the floor.
-        /// </remarks>
-        public async Task LocalizeToFloorAsync()
+        /// <inheritdoc />
+        protected virtual void Update()
         {
-            // Log
-            Log("NOT Attempting to localize to the floor...");
+            TryColocate();
+        }
 
-            // TODO:
+        #endregion Unity Message Handlers
+
+        #region Public Methods
+
+        /// <summary>
+        /// Colocates to <see cref="WorldCenterReference" />.
+        /// </summary>
+        public void Colocate()
+        {
+            ColocateTo(_worldCenterReference);
         }
 
         /// <summary>
-        /// Saves the current stage location to the store and cloud.
+        /// Colocates to the specified position and rotation.
         /// </summary>
-        /// <returns>
-        /// A <see cref="Task" /> that yields the result of the operation.
-        /// </returns>
-        public async Task SaveToCloudAndStoreAsync()
-        {
-            // Log
-            Log("Saving anchor to cloud...");
-
-            // If there is no spatial anchor, add it
-            var anchor = _stage.GetOrAddComponent<OVRSpatialAnchor>();
-
-            // Create a task completion source for the save
-            TaskCompletionSource<bool> saveSource = new();
-
-            // Start save process
-            StartCoroutine(SaveAnchorToCloudRoutine(anchor, saveSource));
-
-            // Wait for it to complete
-            var success = await saveSource.Task;
-
-            // If not successful, we can't save
-            if (!success) { throw new InvalidOperationException("Could not save anchor to cloud."); }
-
-            // Log
-            Log("Saving anchor to store...");
-
-            // Save to the store
-            await _anchorStore.SaveAnchorIdAsync(anchor.Uuid);
-
-            // Log
-            Log("Anchor saved to cloud and store...");
-        }
-
-        /// <summary>
-        /// Attempts to localize the stage to the specified anchor ID.
-        /// </summary>
-        /// <param name="anchorId">
-        /// The ID of the anchor to localize to.
+        /// <param name="worldCenter">
+        /// The world center to colocate to.
         /// </param>
-        /// <returns>
-        /// A <see cref="Task" /> that represents the operation.
-        /// </returns>
-        public async Task<bool> TryLocalizeToAnchorAsync(Guid anchorId)
-        {
-            // Log
-            Log($"Attempting to load cloud anchor '{anchorId}'...");
-
-            // Create the load options
-            OVRSpatialAnchor.LoadOptions loadOptions = new OVRSpatialAnchor.LoadOptions
-            {
-                Timeout = 0,
-                StorageLocation = OVRSpace.StorageLocation.Cloud,
-                Uuids = new Guid[] { anchorId }
-            };
-
-            // Attempt to load anchors
-            var loadedAnchors = await OVRSpatialAnchor.LoadUnboundAnchorsAsync(loadOptions);
-
-            // Did we get the unbound anchor?
-            if (loadedAnchors.Length > 0)
-            {
-                // Bind
-                BindToAnchor(loadedAnchors[0]);
-                return true;
-            }
-            else
-            {
-                // Log
-                LogWarning($"Cloud anchor '{anchorId}' could not be loaded...");
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// Attempts to localize the stage to the specified unbound anchor.
-        /// </summary>
-        /// <param name="unboundAnchor">
-        /// The unbound anchor to localize to.
+        /// <param name="worldRotation">
+        /// The world rotation to colocate to.
         /// </param>
-        /// <returns>
-        /// A <see cref="Task" /> that represents the operation.
-        /// </returns>
-        public async Task<bool> TryLocalizeToAnchorAsync(OVRSpatialAnchor.UnboundAnchor unboundAnchor)
+        public void ColocateTo(Vector3 worldCenter, Quaternion worldRotation)
         {
-            // Already localized?
-            if (unboundAnchor.Localized)
-            {
-                // Already localized, bind
-                BindToAnchor(unboundAnchor);
-                return true;
-            }
+            // Move player rig opposite of position, which will make the position now 0,0,0
+            _playerRig.transform.Translate(-worldCenter);
 
-            // Not already localized, localize
-            var success = await unboundAnchor.LocalizeAsync();
-
-            // If successful, bind
-            if (success)
-            {
-                BindToAnchor(unboundAnchor);
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            // Rotate the player rig to the opposite Y angle of rotation
+            _playerRig.transform.Rotate(Vector3.up, worldRotation.eulerAngles.y * -1);
         }
 
         /// <summary>
-        /// Attempts to localize the stage to the stored anchor.
+        /// Colocates to the specified transform.
         /// </summary>
-        /// <returns>
-        /// A <see cref="Task" /> that yields the result of the operation.
-        /// </returns>
-        public async Task<bool> TryLocalizeToStoreAsync()
+        /// <param name="transform">
+        /// The <see cref="Transform" /> to colocate to.
+        /// </param>
+        public void ColocateTo(Transform transform)
         {
-            // Log
-            Log("Trying to loading anchor ID from store...");
-
-            // Attempt to load the anchor ID
-            var anchorId = await _anchorStore.LoadAnchorIdAsync();
-
-            // If the anchor is empty, nothing else to do
-            if (anchorId == Guid.Empty)
-            {
-                // Log
-                Log("No anchor ID found in the store...");
-                return false;
-            }
-
-            // Try to localize by anchor ID
-            return await TryLocalizeToAnchorAsync(anchorId);
+            ColocateTo(transform.position, transform.rotation);
         }
 
         #endregion Public Methods
@@ -357,19 +132,17 @@ namespace SolerSoft.MRMUSK.Colocation
         #region Public Properties
 
         /// <summary>
-        /// Gets or sets whether multiple users are in the same room.
+        /// Gets or sets the transform that represents the player rig.
         /// </summary>
-        public bool InSameRoom { get => _inSameRoom; set => _inSameRoom = value; }
+        public Transform PlayerRig { get => _playerRig; set => _playerRig = value; }
 
         /// <summary>
-        /// Gets or sets whether to localize automatically on start.
+        /// Gets or sets the transform that will be used as a reference for world center.
         /// </summary>
-        public bool LocalizeOnStart { get => _localizeOnStart; set => _localizeOnStart = value; }
-
-        /// <summary>
-        /// Gets or sets the stage where colocated content is presented.
-        /// </summary>
-        public GameObject Stage { get => _stage; set => _stage = value; }
+        /// <remarks>
+        /// This is often a controller but could be any tracked device.
+        /// </remarks>
+        public Transform WorldCenterReference { get => _worldCenterReference; set => _worldCenterReference = value; }
 
         #endregion Public Properties
     }
