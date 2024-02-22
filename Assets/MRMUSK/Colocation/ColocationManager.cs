@@ -25,6 +25,10 @@ namespace SolerSoft.MRMUSK.Colocation
         private Transform _playerRig;
 
         [SerializeField]
+        [Tooltip("The positional offset of from the tracked device to consider the 'floor'. This offset might represent the height of a mount for the tracked device.")]
+        private Vector3 _positionOffset;
+
+        [SerializeField]
         [Tooltip("The rotational offset of from the tracked device to consider 'level'. This angle might represent a mount or holder for the tracked device.")]
         private Vector3 _rotationOffset;
 
@@ -42,8 +46,7 @@ namespace SolerSoft.MRMUSK.Colocation
         private void TryColocate()
         {
             // Check to see if all buttons are held if (OVRInput.Get(OVRInput.Button.One) &&
-            // OVRInput.Get(OVRInput.Button.Two) && OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger))
-            if (true)
+            if (OVRInput.Get(OVRInput.Button.Two) && OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger))
             {
                 // Avoid re-entrance
                 if (!_isColocating)
@@ -148,7 +151,7 @@ namespace SolerSoft.MRMUSK.Colocation
             _playerRig.rotation = Quaternion.Inverse(transform.rotation * rotationOffset) * _playerRig.rotation;
 
             // The new position is the old position offset by the target transforms NEGATIVE amount
-            _playerRig.transform.position = _playerRig.transform.position + -transform.position;
+            _playerRig.transform.position = _playerRig.transform.position + -(transform.position + _positionOffset);
         }
 
         #endregion Public Methods
