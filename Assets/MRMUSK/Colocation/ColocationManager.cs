@@ -37,8 +37,9 @@ namespace SolerSoft.MRMUSK.Colocation
         /// </summary>
         private void TryColocate()
         {
-            // Check to see if all buttons are held
-            if (OVRInput.Get(OVRInput.Button.One) && OVRInput.Get(OVRInput.Button.Two) && OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger))
+            // Check to see if all buttons are held if (OVRInput.Get(OVRInput.Button.One) &&
+            // OVRInput.Get(OVRInput.Button.Two) && OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger))
+            if (true)
             {
                 // Avoid re-entrance
                 if (!_isColocating)
@@ -136,47 +137,11 @@ namespace SolerSoft.MRMUSK.Colocation
         /// </param>
         public void ColocateTo(Transform transform)
         {
-            // Get difference between player rig to transform
-            Vector3 rigToTransformDistance = _playerRig.position - transform.position;
+            // The new rotation is the inverse of the target rotation multiplied by the current rotation
+            _playerRig.rotation = Quaternion.Inverse(transform.rotation) * _playerRig.rotation;
 
-            // Get difference between player rig to transform rotation
-            float rigToTransformAngle = _playerRig.rotation.eulerAngles.y - transform.rotation.eulerAngles.y;
-
-            /*
-            // Translate
-            _playerRig.Translate(-transform.position);
-
-            // Rotate first
-            _playerRig.Rotate(Vector3.up, -transform.rotation.eulerAngles.y, Space.World);
-            // _playerRig.rotation = Quaternion.Euler(0, -transform.rotation.eulerAngles.y, 0);
-
-            // _playerRig.Translate(transform.InverseTransformPoint(Vector3.zero));
-            */
-
-            // Calculate the translation and rotation needed to reset the child's world position and rotation
-            Vector3 childPosition = transform.position;
-            Quaternion childRotation = transform.rotation;
-
-            // Reverse the child's position and rotation to get the offset needed for the parent
-            Vector3 offsetPosition = -childPosition;
-            Quaternion offsetRotation = Quaternion.Inverse(childRotation);
-
-            // Apply the offset to the parent's position and rotation _playerRig.rotation =
-            // Quaternion.Euler(0, offsetRotation.eulerAngles.y - rigToTransformAngle, 0);
-            // _playerRig.Rotate(Vector3.up, -transform.rotation.eulerAngles.y +
-            // rigToTransformAngle, Space.World); _playerRig.Rotate(Vector3.up,
-            // -transform.rotation.eulerAngles.y, Space.World);
-            Quaternion lookRotationVar = Quaternion.identity;
-
-            lookRotationVar = lookRotationVar * Quaternion.Inverse(transform.rotation);
-            lookRotationVar = lookRotationVar * _playerRig.rotation;
-
-            _playerRig.rotation = lookRotationVar;
-
-            // _playerRig.position += offsetPosition; _playerRig.Translate(-rigToTransformDistance);
-            // _playerRig.position = -(transform.position - rigToTransformDistance); _playerRig.Translate(-transform.position);
-            _playerRig.Translate(-transform.position);
-            Debug.Log(transform.position);
+            // The new position is the old position offset by the target transforms NEGATIVE amount
+            _playerRig.transform.position = _playerRig.transform.position + -transform.position;
         }
 
         #endregion Public Methods
