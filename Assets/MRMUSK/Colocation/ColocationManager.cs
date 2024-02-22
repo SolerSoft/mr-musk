@@ -25,6 +25,10 @@ namespace SolerSoft.MRMUSK.Colocation
         private Transform _playerRig;
 
         [SerializeField]
+        [Tooltip("The rotational offset of from the tracked device to consider 'level'. This angle might represent a mount or holder for the tracked device.")]
+        private Vector3 _rotationOffset;
+
+        [SerializeField]
         [Tooltip("The transform that will be used as a reference for world center. This is often a controller but could be any tracked device.")]
         private Transform _worldCenterReference;
 
@@ -137,8 +141,11 @@ namespace SolerSoft.MRMUSK.Colocation
         /// </param>
         public void ColocateTo(Transform transform)
         {
+            // Calculate the offset
+            Quaternion rotationOffset = Quaternion.Euler(_rotationOffset);
+
             // The new rotation is the inverse of the target rotation multiplied by the current rotation
-            _playerRig.rotation = Quaternion.Inverse(transform.rotation) * _playerRig.rotation;
+            _playerRig.rotation = Quaternion.Inverse(transform.rotation * rotationOffset) * _playerRig.rotation;
 
             // The new position is the old position offset by the target transforms NEGATIVE amount
             _playerRig.transform.position = _playerRig.transform.position + -transform.position;
