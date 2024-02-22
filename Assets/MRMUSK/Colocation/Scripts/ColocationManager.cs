@@ -52,7 +52,7 @@ namespace SolerSoft.MRMUSK.Colocation
                 if (!_isColocating)
                 {
                     // We are now co-locating
-                    //_isColocating = true;
+                    _isColocating = true;
 
                     // Colocate to world reference
                     Colocate();
