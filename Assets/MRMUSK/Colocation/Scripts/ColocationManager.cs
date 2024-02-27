@@ -1,4 +1,5 @@
 using Newtonsoft.Json.Bson;
+using SolerSoft.MRMUSK.Input;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -14,11 +15,38 @@ namespace SolerSoft.MRMUSK.Colocation
     /// </summary>
     public class ColocationManager : MonoBehaviour
     {
+        #region Constants
+
+        /// <summary>
+        /// The default buttons that should be held down to trigger colocation by controller.
+        /// </summary>
+        private static readonly OVRInput.Button[] s_ColocationButtons = { OVRInput.Button.One, OVRInput.Button.Two, OVRInput.Button.PrimaryIndexTrigger };
+
+        #endregion Constants
+
         #region Private Fields
-        private bool _isColocating;
+
+        private bool _isColocatingToController;
+
         #endregion Private Fields
 
         #region Unity Inspector Variables
+
+        [SerializeField]
+        [Tooltip("Whether to affect camera pitch during colocation.")]
+        private bool _affectPitch;
+
+        [SerializeField]
+        [Tooltip("Whether to affect camera roll during colocation.")]
+        private bool _affectRoll;
+
+        [SerializeField]
+        [Tooltip("The buttons that should be held down to trigger colocation by controller.")]
+        private OVRInput.Button[] _colocateButtons = s_ColocationButtons;
+
+        [SerializeField]
+        [Tooltip("The controller that should be used for controller-based colocation.")]
+        private OVRControllerHelper _controller;
 
         [SerializeField]
         [Tooltip("The transform that represents the player rig.")]
@@ -32,37 +60,51 @@ namespace SolerSoft.MRMUSK.Colocation
         [Tooltip("The rotational offset of from the tracked device to consider 'level'. This angle might represent a mount or holder for the tracked device.")]
         private Vector3 _rotationOffset;
 
-        [SerializeField]
-        [Tooltip("The transform that will be used as a reference for world center. This is often a controller but could be any tracked device.")]
-        private Transform _worldCenterReference;
-
         #endregion Unity Inspector Variables
 
         #region Private Methods
 
         /// <summary>
-        /// Checks if we should Colocate based on controller input.
+        /// Attempts to colocate to the controller.
         /// </summary>
-        private void TryColocate()
+        private bool TryColocateToController()
         {
-            // Check to see if all buttons are held if (OVRInput.Get(OVRInput.Button.One) &&
-            if (OVRInput.Get(OVRInput.Button.Two) && OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger))
+            // If no controller defined, can't attempt to colocate to controller
+            if (_controller == null)
+            {
+                Debug.LogError("Cannot colocate to controller because the controller has not been specified.");
+                return false;
+            }
+            if ((_controller.m_controller != OVRInput.Controller.LTouch) && (_controller.m_controller != OVRInput.Controller.RTouch))
+            {
+                Debug.LogError("Cannot colocate to controller because only LTouch or RTouch are supported.");
+                return false;
+            }
+
+            // Check to see if all the right buttons are held down on the target controller
+            if (OVRInputHelper.GetAll(_controller.m_controller, _colocateButtons))
             {
                 // Avoid re-entrance
-                if (!_isColocating)
+                if (!_isColocatingToController)
                 {
                     // We are now co-locating
-                    _isColocating = true;
+                    _isColocatingToController = true;
 
                     // Colocate to world reference
-                    Colocate();
+                    ColocateTo(_controller.gameObject.transform);
+
+                    // Success
+                    return true;
                 }
             }
             else
             {
                 // OK to check again on next frame
-                _isColocating = false;
+                _isColocatingToController = false;
             }
+
+            // Not colocated
+            return false;
         }
 
         #endregion Private Methods
@@ -80,9 +122,9 @@ namespace SolerSoft.MRMUSK.Colocation
                 return;
             }
 
-            if (_worldCenterReference == null)
+            if (_controller == null)
             {
-                Debug.LogError($"World center reference must be specified. {nameof(ColocationManager)} will be disabled.");
+                Debug.LogError($"Controller helper must be specified. {nameof(ColocationManager)} will be disabled.");
                 enabled = false;
                 return;
             }
@@ -91,50 +133,12 @@ namespace SolerSoft.MRMUSK.Colocation
         /// <inheritdoc />
         protected virtual void Update()
         {
-            TryColocate();
+            TryColocateToController();
         }
 
         #endregion Unity Message Handlers
 
         #region Public Methods
-
-        /// <summary>
-        /// Colocates to <see cref="WorldCenterReference" />.
-        /// </summary>
-        public void Colocate()
-        {
-            ColocateTo(_worldCenterReference);
-        }
-
-        /*
-        /// <summary>
-        /// Colocates to the specified position and rotation.
-        /// </summary>
-        /// <param name="worldPosition">
-        /// The world center to colocate to.
-        /// </param>
-        /// <param name="worldRotation">
-        /// The world rotation to colocate to.
-        /// </param>
-        public void ColocateTo(Vector3 worldPosition, Quaternion worldRotation)
-        {
-            // Move player rig opposite of position, which will make the position now 0,0,0 _playerRig.transform.Translate(-worldCenter);
-
-            // Rotate the player rig to the opposite Y angle of rotation
-            // _playerRig.transform.Rotate(Vector3.up, worldRotation.eulerAngles.y * -1);
-            // _playerRig.transform.localEulerAngles = new Vector3(0, -worldRotation.eulerAngles.y, 0);
-
-            // Calculate the relative position of GOB from the perspective of GOA
-            Vector3 relativePosition = _playerRig.InverseTransformPoint(worldPosition);
-
-            // Calculate the relative rotation of GOB from the perspective of GOA
-            Quaternion relativeRotation = Quaternion.Inverse(_playerRig.rotation) * worldRotation;
-
-            // Move GOA to make GOB appear at position (0,0,0) and rotation (0,0,0) from its perspective
-            _playerRig.position -= relativePosition;
-            // _playerRig.rotation *= Quaternion.Euler(0, -relativeRotation.eulerAngles.y, 0);
-        }
-        */
 
         /// <summary>
         /// Colocates to the specified transform.
@@ -150,6 +154,9 @@ namespace SolerSoft.MRMUSK.Colocation
             // The new rotation is the inverse of the target rotation multiplied by the current rotation
             _playerRig.rotation = Quaternion.Inverse(transform.rotation * rotationOffset) * _playerRig.rotation;
 
+            // Now limit rotations to affected axis
+            _playerRig.rotation = Quaternion.Euler(_affectRoll ? _playerRig.rotation.eulerAngles.x : 0, _playerRig.rotation.eulerAngles.y, _affectPitch ? _playerRig.rotation.eulerAngles.z : 0);
+
             // The new position is the old position offset by the target transforms NEGATIVE amount
             _playerRig.transform.position = _playerRig.transform.position + -(transform.position + _positionOffset);
         }
@@ -159,17 +166,29 @@ namespace SolerSoft.MRMUSK.Colocation
         #region Public Properties
 
         /// <summary>
+        /// Gets or sets whether to affect camera pitch during colocation.
+        /// </summary>
+        public bool AffectPitch { get => _affectPitch; set => _affectPitch = value; }
+
+        /// <summary>
+        /// Gets or sets whether to affect camera roll during colocation.
+        /// </summary>
+        public bool AffectRoll { get => _affectRoll; set => _affectRoll = value; }
+
+        /// <summary>
+        /// Gets or sets the buttons that should be held down to trigger colocation by controller.
+        /// </summary>
+        public OVRInput.Button[] ColocateButtons { get => _colocateButtons; set => _colocateButtons = value; }
+
+        /// <summary>
+        /// The controller helper that represents the controller to be used for colocation.
+        /// </summary>
+        public OVRControllerHelper ControllerHelper { get => _controller; set => _controller = value; }
+
+        /// <summary>
         /// Gets or sets the transform that represents the player rig.
         /// </summary>
         public Transform PlayerRig { get => _playerRig; set => _playerRig = value; }
-
-        /// <summary>
-        /// Gets or sets the transform that will be used as a reference for world center.
-        /// </summary>
-        /// <remarks>
-        /// This is often a controller but could be any tracked device.
-        /// </remarks>
-        public Transform WorldCenterReference { get => _worldCenterReference; set => _worldCenterReference = value; }
 
         #endregion Public Properties
     }

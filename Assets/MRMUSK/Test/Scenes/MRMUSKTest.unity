@@ -19640,6 +19640,11 @@ PrefabInstance:
       objectReference: {fileID: 559754917}
     - target: {fileID: 1535772207956296948, guid: 4ab949a7cb53e4a448fc2f45c6fd5fcc,
         type: 3}
+      propertyPath: _controller
+      value: 
+      objectReference: {fileID: 573313224}
+    - target: {fileID: 1535772207956296948, guid: 4ab949a7cb53e4a448fc2f45c6fd5fcc,
+        type: 3}
       propertyPath: _worldCenterReference
       value: 
       objectReference: {fileID: 1272070895}

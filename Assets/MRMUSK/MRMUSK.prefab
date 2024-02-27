@@ -44,10 +44,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 145eb795be551f849b470374310f62ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _colocateButtons: 010000000200000000200000
+  _controller: {fileID: 0}
   _playerRig: {fileID: 0}
-  _positionOffset: {x: 0, y: -0.84, z: 0}
-  _rotationOffset: {x: 22, y: 0, z: 10}
-  _worldCenterReference: {fileID: 0}
+  _positionOffset: {x: 0, y: -0.85, z: 0}
+  _rotationOffset: {x: 45, y: -27, z: -17}
 --- !u!1 &5805222718119057861
 GameObject:
   m_ObjectHideFlags: 0
