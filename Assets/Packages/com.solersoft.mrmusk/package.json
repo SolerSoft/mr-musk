@@ -4,6 +4,15 @@
 	"displayName": "Mixed Reality Multi User Starter Kit",
 	"description": "A library for rapidly prototyping Mixed Reality apps on Quest.",
 	"unity": "2022.3",
+	"scopedRegistries": [
+		{
+			"name": "Normal",
+			"url": "https://normcore-registry.normcore.io",
+			"scopes": [
+				"com.normalvr", "io.normcore"
+			]
+		}
+    ],
 	"dependencies": {
 		"com.meta.xr.sdk.all": "60.0.0",
 		"com.normalvr.normcore": "2.9.0"
