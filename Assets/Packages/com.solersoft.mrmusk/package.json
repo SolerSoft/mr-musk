@@ -1,8 +1,8 @@
 {
 	"name": "com.solersoft.mrmusk",
-	"version": "0.0.3",
-	"displayName": "Mixed Reality Multi User Starter Kit",
-	"description": "A library for rapidly prototyping Mixed Reality apps on Quest.",
+	"version": "0.0.4",
+	"displayName": "MRMUSK",
+	"description": "Mixed Reality Multi User Starter Kit. A library for rapidly prototyping Mixed Reality apps on Quest.",
 	"unity": "2022.3",
 	"scopedRegistries": [
 		{
