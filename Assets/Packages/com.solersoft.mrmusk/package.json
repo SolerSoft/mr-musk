@@ -1,0 +1,29 @@
+{
+	"name": "com.solersoft.mrmusk",
+	"version": "0.0.1",
+	"displayName": "Mixed Reality Multi User Starter Kit",
+	"description": "A library for rapidly prototyping Mixed Reality apps on Quest.",
+	"unity": "2022.3",
+	"dependencies": {
+		"com.meta.xr.sdk.all": "60.0.0",
+		"com.normalvr.normcore": "2.9.0"
+	},
+	"keywords": [
+	"meta",
+	"mixedreality",
+	"multiuser",
+	"mr"
+	],
+	"author": {
+	"name": "SolerSoft",
+	"email": "developer@solersoft.com",
+	"url": "https://www.solersoft.com"
+	}
+	"samples": [
+        {
+            "displayName": "MRMUSK Samples",
+            "description": "Main MRMUSK samples",
+            "path": "Samples~/MRMUSK"
+        }
+    ]
+}

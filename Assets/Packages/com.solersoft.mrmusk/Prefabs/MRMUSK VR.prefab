@@ -44,6 +44,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 145eb795be551f849b470374310f62ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _affectPitch: 0
+  _affectRoll: 0
   _colocateButtons: 010000000200000000200000
   _controller: {fileID: 0}
   _playerRig: {fileID: 0}
@@ -59,7 +61,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9176597156433982656}
   m_Layer: 0
-  m_Name: MRMUSK
+  m_Name: MRMUSK VR
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -92,7 +94,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1572161834460568, guid: fca9d4afb3743274e8f7da14019d7e0b, type: 3}
       propertyPath: m_Name
-      value: Realtime + VR Player
+      value: Realtime
       objectReference: {fileID: 0}
     - target: {fileID: 4520454903943832, guid: fca9d4afb3743274e8f7da14019d7e0b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -133,6 +135,11 @@ PrefabInstance:
     - target: {fileID: 4520454903943832, guid: fca9d4afb3743274e8f7da14019d7e0b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114501696213753918, guid: fca9d4afb3743274e8f7da14019d7e0b,
+        type: 3}
+      propertyPath: _roomToJoinOnStart
+      value: AppNameHere VR Room
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

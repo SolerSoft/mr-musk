@@ -32,26 +32,29 @@ namespace SolerSoft.MRMUSK.Colocation
 
         #region Unity Inspector Variables
 
+        [Header("Camera Settings")]
         [SerializeField]
-        [Tooltip("Whether to affect camera pitch during colocation.")]
+        [Tooltip("Whether to affect camera pitch during colocation. This is usually unchecked.")]
         private bool _affectPitch;
 
         [SerializeField]
-        [Tooltip("Whether to affect camera roll during colocation.")]
+        [Tooltip("Whether to affect camera roll during colocation. This is usually unchecked.")]
         private bool _affectRoll;
 
+        [SerializeField]
+        [Tooltip("The camera rig that should be moved when colocated. This must be assigned.")]
+        private Transform _cameraRig;
+
+        [Header("Controller Settings")]
         [SerializeField]
         [Tooltip("The buttons that should be held down to trigger colocation by controller.")]
         private OVRInput.Button[] _colocateButtons = s_ColocationButtons;
 
         [SerializeField]
-        [Tooltip("The controller that should be used for controller-based colocation.")]
+        [Tooltip("The controller that should be used for controller-based colocation. This must be assigned.")]
         private OVRControllerHelper _controller;
 
-        [SerializeField]
-        [Tooltip("The transform that represents the player rig.")]
-        private Transform _playerRig;
-
+        [Header("Offset Settings")]
         [SerializeField]
         [Tooltip("The positional offset of from the tracked device to consider the 'floor'. This offset might represent the height of a mount for the tracked device.")]
         private Vector3 _positionOffset;
@@ -115,7 +118,7 @@ namespace SolerSoft.MRMUSK.Colocation
         protected virtual void Start()
         {
             // Verify all dependencies are met
-            if (_playerRig == null)
+            if (_cameraRig == null)
             {
                 Debug.LogError($"The player rig must be specified. {nameof(ColocationManager)} will be disabled.");
                 enabled = false;
@@ -152,13 +155,13 @@ namespace SolerSoft.MRMUSK.Colocation
             Quaternion rotationOffset = Quaternion.Euler(_rotationOffset);
 
             // The new rotation is the inverse of the target rotation multiplied by the current rotation
-            _playerRig.rotation = Quaternion.Inverse(transform.rotation * rotationOffset) * _playerRig.rotation;
+            _cameraRig.rotation = Quaternion.Inverse(transform.rotation * rotationOffset) * _cameraRig.rotation;
 
             // Now limit rotations to affected axis
-            _playerRig.rotation = Quaternion.Euler(_affectRoll ? _playerRig.rotation.eulerAngles.x : 0, _playerRig.rotation.eulerAngles.y, _affectPitch ? _playerRig.rotation.eulerAngles.z : 0);
+            _cameraRig.rotation = Quaternion.Euler(_affectRoll ? _cameraRig.rotation.eulerAngles.x : 0, _cameraRig.rotation.eulerAngles.y, _affectPitch ? _cameraRig.rotation.eulerAngles.z : 0);
 
             // The new position is the old position offset by the target transforms NEGATIVE amount
-            _playerRig.transform.position = _playerRig.transform.position + -(transform.position + _positionOffset);
+            _cameraRig.transform.position = _cameraRig.transform.position + -(transform.position + _positionOffset);
         }
 
         #endregion Public Methods
@@ -166,14 +169,19 @@ namespace SolerSoft.MRMUSK.Colocation
         #region Public Properties
 
         /// <summary>
-        /// Gets or sets whether to affect camera pitch during colocation.
+        /// Gets or sets whether to affect camera pitch during colocation. This is usually false.
         /// </summary>
         public bool AffectPitch { get => _affectPitch; set => _affectPitch = value; }
 
         /// <summary>
-        /// Gets or sets whether to affect camera roll during colocation.
+        /// Gets or sets whether to affect camera roll during colocation. This is usually false.
         /// </summary>
         public bool AffectRoll { get => _affectRoll; set => _affectRoll = value; }
+
+        /// <summary>
+        /// Gets or sets the camera rig that should be moved when colocated. This must be supplied.
+        /// </summary>
+        public Transform CameraRig { get => _cameraRig; set => _cameraRig = value; }
 
         /// <summary>
         /// Gets or sets the buttons that should be held down to trigger colocation by controller.
@@ -181,14 +189,10 @@ namespace SolerSoft.MRMUSK.Colocation
         public OVRInput.Button[] ColocateButtons { get => _colocateButtons; set => _colocateButtons = value; }
 
         /// <summary>
-        /// The controller helper that represents the controller to be used for colocation.
+        /// The controller helper that represents the controller to be used for colocation. This
+        /// must be supplied.
         /// </summary>
         public OVRControllerHelper ControllerHelper { get => _controller; set => _controller = value; }
-
-        /// <summary>
-        /// Gets or sets the transform that represents the player rig.
-        /// </summary>
-        public Transform PlayerRig { get => _playerRig; set => _playerRig = value; }
 
         #endregion Public Properties
     }
