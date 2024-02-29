@@ -41,7 +41,7 @@ Now we can add the starter kit to our project.
 2. Click the '+' dropdown in the top-left corner and choose **Add Package from git
    URL**.
    
-   <img src="file:///C:/Code/SolerSoft/MRMUSK/Docs/Images/AddFromGitURL.png" title="" alt="AddFromGitURL.png" width="230">
+   <img src="Images/AddFromGitURL.png" title="" alt="AddFromGitURL.png" width="230">
 
 3. In the URL field enter:
    
