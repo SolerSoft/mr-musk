@@ -36,7 +36,7 @@ We 3D printed [this stand](https://www.printables.com/model/618477-meta-quest-3-
 
 No problem! The **Offset Settings** in [Colocation Manager](Assets/Packages/com.solersoft.mrmusk/Colocation/ColocationManager.cs) can handle this. 
 
-<img src="Docs/Images/ColocationManager.png" title="" alt="ColocationManager.png" width="393">
+<img src="Docs/Images/ColocationManager.png" title="" alt="ColocationManager.png" width="400">
 
 Update **Rotation Offset** to match the angles of your stand, and optionally use **Position Offset** to specify a distance between the stand and the floor.
 
