@@ -2,7 +2,7 @@
 
 ## What is MR-MUSK?
 
-Besides a silly name, it's also a Unity package for prototyping shared Mixed Reality experiences quickly on Meta Quest.
+Besides a silly name, it's also a Unity package for quickly prototyping shared Mixed Reality experiences on Meta Quest devices. It supports roughly 16 concurrent users, is compatible with Quest [Building Blocks](https://developer.oculus.com/documentation/unity/bb-overview/), and is especially well suited for hackathons and school courses.
 
 ## Doesn't Oculus already provide Multiplayer Samples?
 
@@ -24,4 +24,4 @@ YES! And if you fully intend to publish your app to [AppLab](https://developer.o
 
 - [Enable point cloud sharing](https://developer.oculus.com/documentation/unity/unity-shared-spatial-anchors/?intern_source=devblog&intern_content=build-local-multiplayer-experiences-shared-spatial-anchors#ensuring-share-point-cloud-data-is-enabled) on your device.
 
-For hackathons and school curriculums, the above requirements may not be feasible for many reasons. This project allows colocation without any of the above requirements.
+For hackathons and school settings, the above requirements may not be feasible for several reasons. This project allows MR colocation without any of the above requirements.
