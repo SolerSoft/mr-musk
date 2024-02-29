@@ -121,15 +121,18 @@ If you want to add MR-MUSK to an existing scene, here's what we recommend:
 
 ## Configure Normcore
 
-Normcore
+The last step before pressing Play or deploying to a device is configuring Normcore.
 
-Before you can hit
-play or deploy to your device, you need to provide the App Key for Normcore.
-This is how they know who to bill when you go over the free number of hours
-included.
+1. In your Unity scene, find and expand the **MRMUSK MR** prefab
 
-App Key
+2. Select the **Realtime** child object
+   
+   <img title="" src="Images/RealtimeChild.png" alt="RealtimeChild.png" width="260">
 
-Room Name
+3. In the Inspector window, paste in your App Key.
+   
+   <img title="" src="Images/NormKey.png" alt="NormKey.png" width="389">
 
-## Print Controller Mount
+If you are a University student, your professor will likely provide this key to you. Otherwise, you can create your own account at [Normal.io](https://normcore.io/) then [create an application](https://normcore.io/dashboard/app/applications/create) to get an App Key.
+
+> TIP: It's also a good idea to use a custom **Room Name** if multiple students are sharing the same App Key. Otherwise you might have some unexpected guests!

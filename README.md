@@ -10,7 +10,7 @@ Besides a silly name, it's also a library for quickly prototyping shared Mixed R
 
 Ready to get started? Check out our 
 
-<span style="font-size:30px">[Getting Started Guide](Docs/GettingStarted.md)</span>
+🚩 [Getting Started Guide](Docs/GettingStarted.md)
 
 ## What is colocation?
 
