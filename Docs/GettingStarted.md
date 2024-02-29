@@ -81,30 +81,43 @@ Now that the Oculus SDK is part of our project, we need to configure it.
    
    <img src="Images/OculusFixAll.png" title="" alt="OculusFixAll.png" width="600">
 
-## Import Samples
+## Scene Setup
 
-Sample Scenes
+Now we need to configure our scene for Mixed Reality on the Quest. The easiest way to do this is to import the sample scenes that come with MR-MUSK.
 
-Though configuring
-your initial scene isn't difficult, it's even easier to start from a working
-sample.
+1. Click on `Window > Package Manager`
 
-Return to the
-Package Manager
+2. Select **MRMUSK** in the list on the left
 
-Select MRMUSK
+3. Click on the **Samples** tab
 
-Select the Samples
-tab
+4. Click the **Import** button next to Starter Samples
+   
+   <img title="" src="Images/ImportSamples.png" width="600">
 
-Click the Import
-button
+5. Then, in **Project Explorer**, go to **Samples\MRMUSK#.#.#\Starter Samples\Scenes**. 
+   
+   <img title="" src="Images/SamplesInProject.png" alt="SamplesInProject.png" width="313">
+   
+   You can use the **MRMUSK MR Test** scene as a starting point for your project.
 
-In your project,
-open Samples\MRMUSK\#.#.#\Starter Samples\Scenes
+If you want to add MR-MUSK to an existing scene, here's what we recommend:
 
-You can start from
-either the VR scene or the MR scene.
+- **Camera Rig** building block
+
+- **Passthrough** building block
+
+- **Controller** building block
+
+- **MRMUSK MR** prefab
+
+- (Optional) **Hand Tracking** building block
+
+- (Optional) **Synthetic Hands** building block
+
+- (Optional) **NetworkGrabbableCube** prefab
+
+> **IMPORTANT:** Don't forget to configure the building blocks after adding them. For example, **Camera Rig** > **Passthrough Support** has to be either `Supported` or `Required`, even if the **Passthrough** block has been added.
 
 ## Configure Normcore
 
