@@ -4,9 +4,13 @@ https://github.com/SolerSoft/mr-musk/assets/149444736/563eca7d-10d3-45e3-bf57-65
 
 ## What is MR-MUSK?
 
-Besides a silly name, it's also a library for quickly prototyping shared Mixed Reality experiences on Quest devices. It supports colocation for [up to 16 users](https://normcore.io/documentation/essentials/common-questions#how-many-players-can-i-fit-in-a-single-room), is compatible with Quest [Building Blocks](https://developer.oculus.com/documentation/unity/bb-overview/), and is especially well suited for hackathons and college courses. Ready to get started? Check out our 
+Besides a silly name, it's also a library for quickly prototyping shared Mixed Reality experiences on Quest devices. It supports colocation for [up to 16 users](https://normcore.io/documentation/essentials/common-questions#how-many-players-can-i-fit-in-a-single-room), is compatible with Quest [Building Blocks](https://developer.oculus.com/documentation/unity/bb-overview/), and is especially well suited for hackathons and college courses.
 
-<span style="font-size:1.5em;">[Getting Started Guide](Docs/GettingStarted.md)</span>
+## Get Started
+
+Ready to get started? Check out our 
+
+<span style="font-size:30px">[Getting Started Guide](Docs/GettingStarted.md)</span>
 
 ## What is colocation?
 
