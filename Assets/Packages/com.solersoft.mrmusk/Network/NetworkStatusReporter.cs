@@ -11,7 +11,19 @@ namespace SolerSoft.MRMUSK.Network
     /// </summary>
     public class NetworkStatusReporter : MonoBehaviour
     {
+        #region Constants
+
+        private const float UPDATE_RATE = 1.0f;
+
+        #endregion Constants
+
         #region Private Fields
+
+        private float _lastUpdateTime;
+
+        #endregion Private Fields
+
+        #region Unity Inspector Variables
 
         [SerializeField]
         [Tooltip("The Realtime instance to monitor for status changes.")]
@@ -21,23 +33,71 @@ namespace SolerSoft.MRMUSK.Network
         [Tooltip("The Text block to update with status messages.")]
         private TextMeshPro _text;
 
-        #endregion Private Fields
+        #endregion Unity Inspector Variables
+
+        #region Private Methods
+
+        private void TryUpdateStatus()
+        {
+            // Make sure we have the components we need
+            if (_realtime == null || _text == null) { return; }
+
+            // Update based on status
+            if (_realtime.disconnected)
+            {
+                // Not connected. Configured?
+                if ((_realtime.normcoreAppSettings != null) && (!string.IsNullOrEmpty(_realtime.normcoreAppSettings.normcoreAppKey)))
+                {
+                    _text.text = "Disconnected.";
+                }
+                else
+                {
+                    _text.text = "ERROR: Check Realtime Settings";
+                }
+            }
+            else if (_realtime.connecting)
+            {
+                _text.text = "Connecting...";
+            }
+            else if (_realtime.connected)
+            {
+                // Are we in a room?
+                if (_realtime.room != null)
+                {
+                    _text.text = $"Connected to '{_realtime.room.name}'.";
+                }
+                else
+                {
+                    // Are we trying to connect to a room?
+                    if (!string.IsNullOrEmpty(_realtime.roomToJoinOnStart))
+                    {
+                        _text.text = $"Connected, joining '{_realtime.roomToJoinOnStart}'...";
+                    }
+                    else
+                    {
+                        _text.text = $"Connected to server but not to room.";
+                    }
+                }
+            }
+        }
+
+        #endregion Private Methods
 
         #region Unity Events
 
         private void OnEnable()
         {
-            // _realtime.
+            TryUpdateStatus();
         }
 
-        // Start is called before the first frame update
-        private void Start()
-        {
-        }
-
-        // Update is called once per frame
         private void Update()
         {
+            // Don't update on every frame
+            if (Time.time >= (_lastUpdateTime + UPDATE_RATE))
+            {
+                _lastUpdateTime = Time.time;
+                TryUpdateStatus();
+            }
         }
 
         #endregion Unity Events

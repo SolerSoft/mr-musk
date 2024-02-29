@@ -15,7 +15,7 @@
 	],
 	"dependencies": {
 		"com.meta.xr.sdk.all": "60.0.0",
-		"com.normalvr.normcore": "2.9.0"
+		"com.normalvr.normcore": "2.9.2"
 	},
 	"keywords": [
 	"meta",

@@ -127,7 +127,7 @@
       "url": "https://packages.unity.com"
     },
     "com.normalvr.normcore": {
-      "version": "2.9.0",
+      "version": "2.9.2",
       "depth": 0,
       "source": "registry",
       "dependencies": {
