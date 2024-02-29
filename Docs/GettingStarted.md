@@ -16,18 +16,23 @@ When creating your project we recommend **3D URP**, but standard **3D** is also 
 
 ## Add Scoped Registry
 
+This starter kit uses [Normcore](https://normcore.io/) for networking, but Normcore distributes its packages through their own package server. We need to add their scoped registry to our project or Unity won't know how to find their packages.
 
+1. Click on `Edit > Project Settings > Package Manager`
 
-This starter kit
-uses Normcore, but Normcore doesn't distribute its packages through the Unity
-package server. In this step we'll add Normcores package server to our project.
+2. Under **Scoped Registries**, add the following information:
 
+```
 Name: Normal
+URL: https://normcore-registry.normcore.io
+Scope(s): com.normalvr, io.normcore
+```
 
-URL: [https://normcore-registry.normcore.io](https://normcore-registry.normcore.io)
+When you're done it should look like this:
 
-Scope(s):
-com.normalvr, io.normcore
+![NormcoreRegistry.png](Images/NormcoreRegistry.png)
+
+
 
 ## Add
 
