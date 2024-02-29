@@ -4,15 +4,47 @@ https://github.com/SolerSoft/mr-musk/assets/149444736/563eca7d-10d3-45e3-bf57-65
 
 ## What is MR-MUSK?
 
-Besides a silly name, it's also a Unity package for quickly prototyping shared Mixed Reality experiences on Meta Quest devices. It supports roughly 16 concurrent users, is compatible with Quest [Building Blocks](https://developer.oculus.com/documentation/unity/bb-overview/), and is especially well suited for hackathons and school courses.
+Besides a silly name, it's also a Unity package for quickly prototyping shared Mixed Reality experiences on Meta Quest devices. It supports colocation of [up to 16 users](https://normcore.io/documentation/essentials/common-questions#how-many-players-can-i-fit-in-a-single-room), is compatible with Quest [Building Blocks](https://developer.oculus.com/documentation/unity/bb-overview/), and is especially well suited for hackathons and college courses.
 
-## Doesn't Oculus already provide Multiplayer Samples?
+## What is Colocation?
 
-YES! And if you fully intend to publish your app to [AppLab](https://developer.oculus.com/blog/introducing-app-lab-a-new-way-to-distribute-oculus-quest-apps/) or the [Quest Store](https://www.meta.com/experiences), you might want to consider starting with [Unity-LocalMultiplayerMR](https://github.com/oculus-samples/Unity-LocalMultiplayerMR) instead. However, keep in mind that project leverages [Shard Spatial Anchors](https://developer.oculus.com/blog/build-local-multiplayer-experiences-shared-spatial-anchors/) which in turn requires you to:
+asdf
 
-- Have a [verified](https://developer.oculus.com/policy/developer-verification/) Meta developer account (which needs a payment method or phone number).
+## Getting Started
 
-- [Create an Organization](https://developer.oculus.com/resources/publish-account-management-intro/) for your company.
+asdf
+
+## Didn't Oculus already provide a Multiplayer Sample?
+
+YES! And if you fully intend to publish to AppLab or the Quest Store you might want to start with [Unity-LocalMultiplayerMR](https://github.com/oculus-samples/Unity-LocalMultiplayerMR) instead. However, keep in mind that project leverages Shared Spatial Anchors, and SSA's are incredibly difficult to use in hackathons and college settings. For more information see [The Problem with Shared Anchors](#the-problem-with-shared-anchors).
+
+## Without Shared Anchors, how do you colocate?
+
+Ideally we would use a QR code or image target, but since Quest applications can't access the camera feed we need another trackable target. Luckily, we have trackable targets in the form of controllers. We just need a way to get controllers in a precise location, and for that we use a simple controller stand. Each user places their controller in the stand and presses a button combination to colocate.
+
+<img title="" src="Docs/Images/ControllersInStand.jpg" alt="ControllersInStand.jpg" width="400">
+
+[Colocation Manager](Assets/Packages/com.solersoft.mrmusk/Colocation/ColocationManager.cs) listens for the right button combination (Button 1 + Button 2 + Trigger by default) and updates the users world to match. Then the controller can be removed from the stand.
+
+## Where can I get the controller stand?
+
+We actually 3D printed [this stand](https://www.printables.com/model/618477-meta-quest-3-controller-stand) ([Prusa version](https://www.printables.com/model/706332-meta-quest-3-controller-stand)) but any stand will do. If you do print this particular stand, we recommend scaling it to 95%. That makes the controllers fit nice and snug so they won't wobble around, which helps improve the accuracy in colocation.
+
+## What if I need to use a different stand or location?
+
+No problem! The **Offset Settings** in [Colocation Manager](Assets/Packages/com.solersoft.mrmusk/Colocation/ColocationManager.cs) can handle this. 
+
+<img src="Docs/Images/ColocationManager.png" title="" alt="ColocationManager.png" width="393">
+
+Update **Rotation Offset** to match the angles of your controller stand, and optionally use **Position Offset** if you'd like to specify a distance between the stand and the floor.
+
+## The Problem with Shared Anchors
+
+So what *is* the problem with [Shared Spatial Anchors](https://developer.oculus.com/blog/build-local-multiplayer-experiences-shared-spatial-anchors/) and why all this controller stuff? It's actually less a problem with Shared Anchors and more a problem with the setup required to use them. To use Shared Anchors, even in a prototype, Meta currently requires developers to:
+
+- Have a [verified](https://developer.oculus.com/policy/developer-verification/) developer account (which in turn requires a payment method or phone number).
+
+- [Create an Organization](https://developer.oculus.com/resources/publish-account-management-intro/) for their company.
 
 - [Create an App Record](https://developer.oculus.com/resources/publish-create-app/) in the [developer dashboard](https://developer.oculus.com/manage).
 
@@ -20,10 +52,10 @@ YES! And if you fully intend to publish your app to [AppLab](https://developer.o
 
 - Enable “User ID” and “User Profile” in the Data Use Checkup.
 
-- [Create Test User Accounts](https://developer.oculus.com/documentation/unity/unity-shared-spatial-anchors/?intern_source=devblog&intern_content=build-local-multiplayer-experiences-shared-spatial-anchors#create-test-users) for testing before publishing.
+- [Create Test User Accounts](https://developer.oculus.com/documentation/unity/unity-shared-spatial-anchors/?intern_source=devblog&intern_content=build-local-multiplayer-experiences-shared-spatial-anchors#create-test-users) to use for testing before publishing.
 
-- [Add permissions](https://developer.oculus.com/documentation/unity/unity-shared-spatial-anchors/?intern_source=devblog&intern_content=build-local-multiplayer-experiences-shared-spatial-anchors#android-manifest) to the Android manifest (though the Oculus SDK helps with this).
+- [Add permissions](https://developer.oculus.com/documentation/unity/unity-shared-spatial-anchors/?intern_source=devblog&intern_content=build-local-multiplayer-experiences-shared-spatial-anchors#android-manifest) to the Android manifest (though the SDK helps with this).
 
-- [Enable point cloud sharing](https://developer.oculus.com/documentation/unity/unity-shared-spatial-anchors/?intern_source=devblog&intern_content=build-local-multiplayer-experiences-shared-spatial-anchors#ensuring-share-point-cloud-data-is-enabled) on your device.
+- [Enable point cloud sharing](https://developer.oculus.com/documentation/unity/unity-shared-spatial-anchors/?intern_source=devblog&intern_content=build-local-multiplayer-experiences-shared-spatial-anchors#ensuring-share-point-cloud-data-is-enabled) on their device.
 
-For hackathons and school settings, the above requirements may not be feasible for several reasons. This project allows MR colocation without any of the above requirements.
+For hackathons and college settings, the above requirements are often not feasible or require too much time. This library allows prototyping to start quickly without any of the above requirements.
