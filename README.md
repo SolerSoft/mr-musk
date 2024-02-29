@@ -1,5 +1,7 @@
 # Mixed Reality Multi-User Starter Kit
 
+https://github.com/SolerSoft/mr-musk/assets/149444736/563eca7d-10d3-45e3-bf57-6556dd57630d
+
 ## What is MR-MUSK?
 
 Besides a silly name, it's also a Unity package for quickly prototyping shared Mixed Reality experiences on Meta Quest devices. It supports roughly 16 concurrent users, is compatible with Quest [Building Blocks](https://developer.oculus.com/documentation/unity/bb-overview/), and is especially well suited for hackathons and school courses.
