@@ -6,11 +6,11 @@ These are the steps for getting up and running quickly with MR-MUSK.
 
 First you'll need a Unity project. If you already have one, great! Feel free to use it. If you're starting from scratch we recommend Unity **2022.3.19f1**. Install [Unity Hub](https://unity.com/download) then click [here](unityhub://2022.3.19f1/244b723c30a6) to install the right editor version. During installation, be sure to include **Android Build Support** since Quest devices are based on Android.
 
-<img src="Images/InstallAndroid.png" title="" alt="" width="400">
+<img src="Images/InstallAndroid.png" title="" alt="" width="600">
 
 When creating your project we recommend **3D URP**, but standard **3D** is also fine.
 
-<img src="Images/HubNewProject.png" title="" alt="HubNewProject.png" width="400">
+<img src="Images/HubNewProject.png" title="" alt="HubNewProject.png" width="600">
 
 ## Add Normcore Registry
 
@@ -30,7 +30,7 @@ io.normcore
 
 When you're done it should look like this:
 
-<img src="Images/NormcoreRegistry.png" title="" alt="NormcoreRegistry.png" width="400">
+<img src="Images/NormcoreRegistry.png" title="" alt="NormcoreRegistry.png" width="600">
 
 ## Add MRMUSK Package
 
@@ -61,25 +61,25 @@ Now that the Oculus SDK is part of our project, we need to configure it.
 
 2. Select **Android** and click **Switch Platform** (this will take a minute)
    
-   <img src="Images/AndroidSwitchPlatform.png" title="" alt="AndroidSwitchPlatform.png" width="400">
+   <img src="Images/AndroidSwitchPlatform.png" title="" alt="AndroidSwitchPlatform.png" width="600">
 
 3. Click on `Edit > Project Settings > XR Plugin Management` then click the **Install XR Plugin Management** button. 
    
-   <img title="" src="Images/InstallXRManagement.png" alt="InstallXRManagement.png" width="400">
+   <img title="" src="Images/InstallXRManagement.png" alt="InstallXRManagement.png" width="600">
    
    (This button won't exist if XR is already installed in your project.)
 
 4. Under **XR Plugin Management**, check the box for **Oculus**.
    
-   <img src="Images/XRPluginOculus.png" title="" alt="XRPluginOculus.png" width="400">
+   <img src="Images/XRPluginOculus.png" title="" alt="XRPluginOculus.png" width="600">
 
 5. Under **XR Plugin Management > Oculus**, check the box for **Quest 3**.
    
-   <img src="Images/OculusEnableQ3.png" title="" alt="OculusEnableQ3.png" width="400">
+   <img src="Images/OculusEnableQ3.png" title="" alt="OculusEnableQ3.png" width="600">
 
 6. Under `Edit > Project Settings > Oculus`, click **Fix All** and **Apply All** to resolve any issues.
    
-   <img src="Images/OculusFixAll.png" title="" alt="OculusFixAll.png" width="400">
+   <img src="Images/OculusFixAll.png" title="" alt="OculusFixAll.png" width="600">
 
 ## Import Samples
 
