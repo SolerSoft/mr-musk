@@ -4,7 +4,7 @@ These are the steps for getting up and running quickly with MR-MUSK.
 
 
 
-## Create a Unity Project
+## Create Unity Project
 
 First you'll need a Unity project. If you already have one, great! Feel free to use it. If you're starting from scratch we recommend Unity **2022.3.19f1**. Install [Unity Hub](https://unity.com/download) then click [here](unityhub://2022.3.19f1/244b723c30a6) to install the right editor version. During installation, be sure to include **Android Build Support** since Quest devices are based on Android.
 
@@ -14,7 +14,7 @@ When creating your project we recommend **3D URP**, but standard **3D** is also 
 
 ![HubNewProject.png](Images/HubNewProject.png)
 
-## Add Scoped Registry
+## Add Normcore Registry
 
 This starter kit uses [Normcore](https://normcore.io/) for networking, but Normcore distributes its packages through their own package server. We need to add their scoped registry to our project or Unity won't know how to find their packages.
 
@@ -25,58 +25,65 @@ This starter kit uses [Normcore](https://normcore.io/) for networking, but Normc
 ```
 Name: Normal
 URL: https://normcore-registry.normcore.io
-Scope(s): com.normalvr, io.normcore
+Scope(s): 
+com.normalvr
+io.normcore
 ```
 
 When you're done it should look like this:
 
 ![NormcoreRegistry.png](Images/NormcoreRegistry.png)
 
+## Add MRMUSK Package
 
+Now we can add the starter kit to our project.
 
-## Add
+1. Go to `Window -> Package Manager`
 
-Package
+2. Click the '+' dropdown in the top-left corner and choose **Add Package from git
+   URL**.
+   
+   <img src="file:///C:/Code/SolerSoft/MRMUSK/Docs/Images/AddFromGitURL.png" title="" alt="AddFromGitURL.png" width="229">
 
-Now we can go ahead
-and add the starter kit to our project.
+3. In the URL field enter:
+   
+   ```
+   https://github.com/SolerSoft/mr-musk.git?path=/Assets/Packages/com.solersoft.mrmusk
+   ```
 
-Window -> Package
-Manager
+4. Click the **Add** button
 
-+ dropdown in the
-  top-left corner
+> This process may take a minute or two since it's installing MR-MUSK, Normcore and all of the Oculus SDK. You may also be prompted to restart the Unity editor during installation.
 
-Add Package from Git
-URL
+## Oculus Setup
 
-Package URL:
+Now that the Oculus SDK is part of our project, we need to configure it.
 
-https://github.com/SolerSoft/mr-musk.git?path=/Assets/Packages/com.solersoft.mrmusk
+1. Click on `File > Build Settings`
 
-## Setup
+2. Select **Android** and click **Switch Platform** (this will take a minute)
+   
+   ![AndroidSwitchPlatform.png](Images/AndroidSwitchPlatform.png)
 
-Oculus XR
+3. Click on `Edit > Project Settings > XR Plugin Management` then click the **Install XR Plugin Management** button. 
+   
+   <img title="" src="Images/InstallXRManagement.png" alt="InstallXRManagement.png" width="436">
+   
+   (This button won't exist if XR is already installed in your project.)
 
-If you created a new
-project, now we need to set it up for Oculus Mixed Reality.
+4. Under **XR Plugin Management**, check the box for **Oculus**.
+   
+   ![XRPluginOculus.png](Images/XRPluginOculus.png)
 
-File -> Build
-Settings -> Select Android and click Switch Platform
+5. Under **XR Plugin Management > Oculus**, check the box for **Quest 3**.
+   
+   ![OculusEnableQ3.png](Images/OculusEnableQ3.png)
 
-Edit -> Project
-Settings -> XR Plugin Management -> Install XR Plugin Management
+6. Under `Edit > Project Settings > Oculus`, click **Fix All** and **Apply All** to resolve any issues.
+   
+   ![OculusFixAll.png](Images/OculusFixAll.png)
 
-Under XR Plugin
-Management, check Oculus
-
-Under XR Plugin
-Management -> Oculus, check Quest 3.
-
-Under Edit ->
-Project Settings -> Oculus, resolve any outstanding issues.
-
-## Import
+## Import Samples
 
 Sample Scenes
 
@@ -101,7 +108,7 @@ open Samples\MRMUSK\#.#.#\Starter Samples\Scenes
 You can start from
 either the VR scene or the MR scene.
 
-## Configure
+## Configure Normcore
 
 Normcore
 
@@ -114,8 +121,4 @@ App Key
 
 Room Name
 
-## Print
-
-Controller Mount
-
-?
+## Print Controller Mount
